@@ -16,29 +16,12 @@ namespace Homeshare.Viewmodel
     class CostItemListViewModel : INotifyPropertyChanged
     {
         public CostItemListViewModel(AddSpendViewModel spendViewModel)
-        {
-            if(DBController.TableExists("CostItem"))
-            {
-                //Retrieving data from data base table as a list
-                CostItemSharableList = DBController.GetInfo<CostItem>();
-            }
-            else
-            {
-                Application.Current.MainPage.Navigation.PushAsync(new AddCostItemPage()); 
-            }
-            
+        {          
             //Construction of go to item select Cost item in spend VM or details page. Command declared below
             SelectItemCmd = new Command(async () => 
             {
-                if(spendViewModel != null)
-                {
-                    spendViewModel.SelectedCost = SelectedCostItem;
-                    await Application.Current.MainPage.Navigation.PopAsync();
-                }
-                else
-                {
-                    //await Application.Current.MainPage.Navigation.PushAsync(new SharableInfoPage(SelectedSharable));
-                }
+                spendViewModel.SelectedCost = SelectedCostItem;
+                await Application.Current.MainPage.Navigation.PopAsync();
             });;
 
             //Construction of go to add new cost item page command with declared below
@@ -46,6 +29,8 @@ namespace Homeshare.Viewmodel
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new AddCostItemPage());
             });
+
+            Refresh = new Command(Initialization);
         }
 
         //Selected item value
@@ -59,14 +44,42 @@ namespace Homeshare.Viewmodel
             }
         }
 
+        public void Initialization()
+        {
+            Console.WriteLine("Hello!");
+
+            if (DBController.TableExists("CostItem"))
+            {
+                //Retrieving data from data base table as a list
+                CostItemSharableList = DBController.GetInfo<CostItem>();
+            }
+            else
+            {
+                Application.Current.MainPage.Navigation.PushAsync(new AddCostItemPage());
+            }
+        }
+
+
+        private List<CostItem> list;
         //Cost list data value
-        public List<CostItem> CostItemSharableList { get; set; }
+        public List<CostItem> CostItemSharableList
+        {
+            get { return list; }
+            set
+            {
+                list = new List<CostItem>(value);
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CostItemSharableList)));
+            }
+        }
 
         //Command which called on item tap action
         public Command SelectItemCmd { get; }
 
         //Command which called on add button pressed
         public Command Add { get; }
+
+        public Command Refresh { get; }
 
         //Part of parental interface
         public event PropertyChangedEventHandler PropertyChanged;

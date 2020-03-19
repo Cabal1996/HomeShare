@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
+using Homeshare.Behavior;
 
 namespace Homeshare.Views
 {
-    class CostItemlistPage : ContentPage
+    class CostItemListPage : ContentPage
     {
-        public CostItemlistPage(AddSpendViewModel spendViewModel)
+         public CostItemListPage(AddSpendViewModel spendViewModel)
         {
+        
             BindingContext = new CostItemListViewModel(spendViewModel);
 
             var layout = new StackLayout();
@@ -27,23 +29,31 @@ namespace Homeshare.Views
 
             AddButton.SetBinding(ToolbarItem.CommandProperty, nameof(CostItemListViewModel.Add));
 
-
+            
             CollectionView costItemsList = new CollectionView
             {
                 ItemTemplate = new NotesTemplate(),
                 SelectionMode = SelectionMode.Single
             };
-
+            
 
             costItemsList.SetBinding(CollectionView.ItemsSourceProperty, nameof(CostItemListViewModel.CostItemSharableList));
             costItemsList.SetBinding(CollectionView.SelectedItemProperty, nameof(CostItemListViewModel.SelectedCostItem));
             costItemsList.SetBinding(CollectionView.SelectionChangedCommandProperty, nameof(CostItemListViewModel.SelectItemCmd));
             layout.Children.Add(costItemsList);
-
+           
+            Behaviors.Add(new EventToCommandBehavior
+            {
+                EventName = "Appearing",
+                Command = ((CostItemListViewModel)BindingContext).Refresh
+            });
 
             Content = layout;
 
         }
+
+        
+        
 
         class NotesTemplate : DataTemplate
         {

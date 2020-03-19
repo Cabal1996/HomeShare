@@ -1,5 +1,6 @@
 ﻿using Homeshare.DB;
 using Homeshare.Model;
+using Homeshare.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,7 +42,7 @@ namespace Homeshare.Viewmodel
                 // return to previous page
                 await Application.Current.MainPage.Navigation.PopAsync(); 
 
-                // TODO open "CostItems" list page
+                
             });
         }
 

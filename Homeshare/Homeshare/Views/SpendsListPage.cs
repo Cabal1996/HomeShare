@@ -1,4 +1,5 @@
-﻿using Homeshare.Model;
+﻿using Homeshare.Behavior;
+using Homeshare.Model;
 using Homeshare.Viewmodel;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,7 @@ namespace Homeshare.Views
     {
         public SpendsListPage()
         {
-            var ViewModel = new SpendsViewModel();
-            BindingContext = ViewModel;
+            BindingContext = new SpendsViewModel();
 
             StackLayout layout = new StackLayout();
 
@@ -21,7 +21,6 @@ namespace Homeshare.Views
                 Text = "Add",
                 Order = ToolbarItemOrder.Primary,
                 Priority = 0,
-
             };
 
             ToolbarItems.Add(AddButton);
@@ -79,7 +78,11 @@ namespace Homeshare.Views
 
             Content = layout;
 
-            ViewModel.RefreshFoo();
+            Behaviors.Add(new EventToCommandBehavior
+            {
+                EventName = "Appearing",
+                Command = ((SpendsViewModel)BindingContext).Refresh
+            });
         }
 
         class NotesTemplate : DataTemplate

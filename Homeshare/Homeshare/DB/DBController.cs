@@ -3,6 +3,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 
 /*
@@ -48,6 +49,43 @@ namespace Homeshare.DB
 
             connection.Close();
             return val;
+        }
+
+        public static void ClearDataBase()
+        {
+            File.Delete(App.DatabasePath);
+            /*
+            
+            var con = GetDBConnection(App.DatabasePath);
+
+            string tableName = nameof(Sharable);
+
+            TableMapping map = new TableMapping(typeof(SqlDbType)); // Instead of mapping to a specific table just map the whole database type
+            object[] ps = new object[0]; // An empty parameters object since I never worked out how to use it properly! (At least I'm honest)
+
+            List<object> AllTables = con.Query(map, "SELECT * FROM sqlite_master WHERE type = 'table' ORDER BY name", ps); // Executes the query from which we can count the results
+
+            con.
+
+            Console.WriteLine(AllTables.Count.ToString());
+
+            foreach (var i in AllTables)
+            {
+                Console.WriteLine(i.GetType().Name);
+
+                string SQLCommand = "delete from " + ((TableItem)i).GetType().Name;
+
+                con.Execute(SQLCommand);
+            }
+
+            
+
+            
+            
+            //con.DropTable(new TableMapping(typeof(SqlDbType)));
+            
+            con.Close();
+            */
         }
 
         //Check if table with given name exists

@@ -57,6 +57,8 @@ namespace Homeshare.Views
             };
             //Binding this UI control element to corresponding view-model command
             Spend_button.SetBinding(Button.CommandProperty, nameof(AddSpendViewModel.SpendButton));
+
+            
             //Insertion of an item as the fourth element on the page
             layout.Children.Add(Spend_button);
 

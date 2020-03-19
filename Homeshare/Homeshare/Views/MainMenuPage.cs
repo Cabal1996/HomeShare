@@ -48,10 +48,21 @@ namespace Homeshare.Views
             //Binding view-model command go to Mates items
             ToolbarButtonMates.SetBinding(ToolbarItem.CommandProperty, nameof(MainMenuViewModel.MateCmd));
 
+            //Setting up top toolbar button
+            ToolbarItem ToolbarButtonClearBase = new ToolbarItem
+            {
+                Text = "Clear base",
+                Order = ToolbarItemOrder.Secondary,
+                Priority = 2
+            };
+            //Binding view-model command go to Mates items
+            ToolbarButtonClearBase.SetBinding(ToolbarItem.CommandProperty, nameof(MainMenuViewModel.ClearBaseCmd));
+
             //Adding items to toolbar in specific order
             this.ToolbarItems.Add(PageName);
             this.ToolbarItems.Add(ToolbarButtonSharables);
             this.ToolbarItems.Add(ToolbarButtonMates);
+            this.ToolbarItems.Add(ToolbarButtonClearBase);
 
             //Button go to calculation page
             Button postSpendButton = new Button

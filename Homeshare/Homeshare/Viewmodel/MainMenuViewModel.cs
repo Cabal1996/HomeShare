@@ -26,7 +26,8 @@ namespace Homeshare.Viewmodel
 
             //Construction of add sharable button command with declared below
             SharableCmd = new Command(async () =>
-            {    
+            {
+                
                 //Check if sharable table exists within data base
                 if(DBController.TableExists(nameof(Homeshare.Model.Sharable)))
                 {
@@ -56,6 +57,9 @@ namespace Homeshare.Viewmodel
                 }
             });
 
+            //Construction of Clear base button command with declared below
+            ClearBaseCmd = new Command(DBController.ClearDataBase);
+
             //Construction of Post spend button command with declared below
             PostSpendCmd = new Command(async () =>
             {
@@ -78,6 +82,9 @@ namespace Homeshare.Viewmodel
 
         //Command with called on Mate button press
         public Command MateCmd { get; }
+
+        //Command with clear up all data from database
+        public Command ClearBaseCmd { get; }
 
         //Command with called on PostSpend button press
         public Command PostSpendCmd { get; }

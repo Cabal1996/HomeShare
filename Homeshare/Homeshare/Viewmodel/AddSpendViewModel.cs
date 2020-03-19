@@ -1,4 +1,5 @@
-﻿using Homeshare.DB;
+﻿
+using Homeshare.DB;
 using Homeshare.Model;
 using Homeshare.Views;
 using System;
@@ -17,6 +18,8 @@ namespace Homeshare.Viewmodel
     {
         public AddSpendViewModel()
         {
+
+
             if(SelectedCost == null)
             {
                 SelectedCostName = "Press to Select Cost";
@@ -27,12 +30,14 @@ namespace Homeshare.Viewmodel
             //Construction of command with declared below
             CostSelectButton = new Command(async () =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new CostItemlistPage(this));
+                await Application.Current.MainPage.Navigation.PushAsync(new CostItemListPage(this));
             });
 
             //Construction of command with declared below
             SpendButton = new Command(async() =>
             {
+                INavigation Nav = Application.Current.MainPage.Navigation;
+
                 //Constructing "Sharable" table item
                 CostTable TableItem = new CostTable
                 {
@@ -46,18 +51,29 @@ namespace Homeshare.Viewmodel
                 {
                     //Insertion table item into the table
                     DBController.InsertItem(TableItem);
+
+                    // Go To Expense list page
+                    await Nav.PopAsync();
                 }
                 else
                 {
                     //Creation of a table then insertion item into it
                     DBController.AddTable(TableItem);
                     DBController.InsertItem(TableItem);
+
+
+
+                    //Create and GO To Expense list page                                      
+                    Nav.InsertPageBefore(new SpendsListPage(), Nav.NavigationStack[Nav.NavigationStack.Count - 1]);
+
+                    await Application.Current.MainPage.Navigation.PopAsync();
                 }
 
-                // Go To Expense list page
-                //TODO await Application.Current.MainPage.Navigation.PopAsync(); 
+                
 
             });
+
+            
         }
 
         //Field of "Cost item" name value

@@ -15,16 +15,16 @@ namespace Homeshare.Viewmodel
 {
     class SpendsViewModel : INotifyPropertyChanged
     {
+        private const float DAY_IN_SECONDS = 86400;
         public SpendsViewModel()
         {
             //Retrieving data from data base table as a list
-            SpentsList = DBController.GetInfo<CostTable>();
             DisplayList = new List<ViewItem>();
             displayList = new List<ViewItem>();
 
             FromDate = new DateTime((DateTime.Today).Year, (DateTime.Today).Month, 1);
 
-            ToDate = DateTime.Today;
+            ToDate = (DateTime.Today).AddSeconds(DAY_IN_SECONDS - 1);
 
             //Construction of go to item details page command with declared below
             ItemDetails = new Command(async () => 
@@ -38,10 +38,7 @@ namespace Homeshare.Viewmodel
                 await Application.Current.MainPage.Navigation.PushAsync(new AddSpendPage());
             });
 
-            Refresh = new Command(() =>
-           {
-               RefreshFoo();
-           });
+            Refresh = new Command(Initialization);
         }
 
         //Selected item value
@@ -112,10 +109,11 @@ namespace Homeshare.Viewmodel
         //Part of parental interface
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void RefreshFoo()
+        private void Initialization()
         {
+            SpentsList = DBController.GetInfo<CostTable>();
             List<ViewItem> TempList = new List<ViewItem>();
-            List<CostItem> CostsNames = DB.DBController.GetInfo<CostItem>();
+            List<CostItem> CostsNames = DBController.GetInfo<CostItem>();
 
             foreach (var I in SpentsList)
             {
@@ -153,9 +151,9 @@ namespace Homeshare.Viewmodel
             DisplayList = TempList;
         }
 
-        static bool IsInDataRange(DateTime data, DateTime min, DateTime max)
+        private static bool IsInDataRange(DateTime data, DateTime min, DateTime max)
         {
-            return min < data && data < max;
+            return min <= data && data <= max;
         }
     }
 }
