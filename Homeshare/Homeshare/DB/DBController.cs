@@ -51,41 +51,45 @@ namespace Homeshare.DB
             return val;
         }
 
-        public static void ClearDataBase()
+        public static void DeleteDatabase()
         {
             File.Delete(App.DatabasePath);
+        }
+
+        public static void CleanUpDataBase()
+        {
             /*
-            
-            var con = GetDBConnection(App.DatabasePath);
+            TODO
+           var con = GetDBConnection(App.DatabasePath);
 
-            string tableName = nameof(Sharable);
+           string tableName = nameof(Sharable);
 
-            TableMapping map = new TableMapping(typeof(SqlDbType)); // Instead of mapping to a specific table just map the whole database type
-            object[] ps = new object[0]; // An empty parameters object since I never worked out how to use it properly! (At least I'm honest)
+           TableMapping map = new TableMapping(typeof(SqlDbType)); // Instead of mapping to a specific table just map the whole database type
+           object[] ps = new object[0]; // An empty parameters object since I never worked out how to use it properly! (At least I'm honest)
 
-            List<object> AllTables = con.Query(map, "SELECT * FROM sqlite_master WHERE type = 'table' ORDER BY name", ps); // Executes the query from which we can count the results
+           List<object> AllTables = con.Query(map, "SELECT * FROM sqlite_master WHERE type = 'table' ORDER BY name", ps); // Executes the query from which we can count the results
 
-            con.
+           con.
 
-            Console.WriteLine(AllTables.Count.ToString());
+           Console.WriteLine(AllTables.Count.ToString());
 
-            foreach (var i in AllTables)
-            {
-                Console.WriteLine(i.GetType().Name);
+           foreach (var i in AllTables)
+           {
+               Console.WriteLine(i.GetType().Name);
 
-                string SQLCommand = "delete from " + ((TableItem)i).GetType().Name;
+               string SQLCommand = "delete from " + ((TableItem)i).GetType().Name;
 
-                con.Execute(SQLCommand);
-            }
+               con.Execute(SQLCommand);
+           }
 
-            
 
-            
-            
-            //con.DropTable(new TableMapping(typeof(SqlDbType)));
-            
-            con.Close();
-            */
+
+
+
+           //con.DropTable(new TableMapping(typeof(SqlDbType)));
+
+           con.Close();
+           */
         }
 
         //Check if table with given name exists

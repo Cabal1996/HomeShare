@@ -16,6 +16,10 @@ namespace Homeshare.Viewmodel
 {
     class AddSpendViewModel : INotifyPropertyChanged
     {
+
+        bool isInCall = false;
+        private object syncLock = new object();
+
         public AddSpendViewModel()
         {
 
@@ -36,41 +40,55 @@ namespace Homeshare.Viewmodel
             //Construction of command with declared below
             SpendButton = new Command(async() =>
             {
-                INavigation Nav = Application.Current.MainPage.Navigation;
 
-                //Constructing "Sharable" table item
-                CostTable TableItem = new CostTable
+                lock (syncLock)
                 {
-                    Date = PostDate,
-                    CostItemId = SelectedCost.Id,
-                    Value = sum
-                };
-
-                //Check existence of a table
-                if (DBController.TableExists(nameof(CostTable)))
-                {
-                    //Insertion table item into the table
-                    DBController.InsertItem(TableItem);
-
-                    // Go To Expense list page
-                    await Nav.PopAsync();
+                    if (isInCall)
+                        return;
+                    isInCall = true;
                 }
-                else
+
+                try
                 {
-                    //Creation of a table then insertion item into it
-                    DBController.AddTable(TableItem);
-                    DBController.InsertItem(TableItem);
+                    INavigation Nav = Application.Current.MainPage.Navigation;
 
+                    //Constructing "Sharable" table item
+                    CostTable TableItem = new CostTable
+                    {
+                        Date = PostDate,
+                        CostItemId = SelectedCost.Id,
+                        Value = sum
+                    };
 
+                    //Check existence of a table
+                    if (DBController.TableExists(nameof(CostTable)))
+                    {
+                        //Insertion table item into the table
+                        DBController.InsertItem(TableItem);
 
-                    //Create and GO To Expense list page                                      
-                    Nav.InsertPageBefore(new SpendsListPage(), Nav.NavigationStack[Nav.NavigationStack.Count - 1]);
+                        // Go To Expense list page
+                        await Nav.PopAsync();
+                    }
+                    else
+                    {
+                        //Creation of a table then insertion item into it
+                        DBController.AddTable(TableItem);
+                        DBController.InsertItem(TableItem);
 
-                    await Application.Current.MainPage.Navigation.PopAsync();
+                        //Create and GO To Expense list page                                      
+                        Nav.InsertPageBefore(new SpendsListPage(), Nav.NavigationStack[Nav.NavigationStack.Count - 1]);
+                        await Nav.PopAsync();
+                    }
+                }
+                finally
+                {
+                    lock (syncLock)
+                    {
+                        isInCall = false;
+                    }
                 }
 
                 
-
             });
 
             
@@ -126,6 +144,11 @@ namespace Homeshare.Viewmodel
                 SelectedCostName = value.Name;
                 selectedCost = value;
             }
+        }
+
+        private void AddFunction()
+        {
+
         }
 
         //Command which called on add button pressed

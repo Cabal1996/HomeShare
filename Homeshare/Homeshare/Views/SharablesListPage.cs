@@ -43,6 +43,7 @@ namespace Homeshare.Views
 
             Content = layout;
 
+
         }
 
         class NotesTemplate : DataTemplate

@@ -58,7 +58,7 @@ namespace Homeshare.Viewmodel
             });
 
             //Construction of Clear base button command with declared below
-            ClearBaseCmd = new Command(DBController.ClearDataBase);
+            ClearBaseCmd = new Command(DBController.DeleteDatabase);
 
             //Construction of Post spend button command with declared below
             PostSpendCmd = new Command(async () =>

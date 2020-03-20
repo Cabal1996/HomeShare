@@ -15,34 +15,36 @@ namespace Homeshare.Viewmodel
 {
     class AddCostItemViewModel : INotifyPropertyChanged
     {
+        bool isInCall = false;
+        private object syncLock = new object();
+
         public AddCostItemViewModel()
         {
             //Construction of command with declared below
-            AddButton = new Command(async() =>
+            AddButton = new Command(async () =>
             {
-                //Constructing "Sharable" table item
-                CostItem TableItem = new CostItem
+                lock (syncLock)
                 {
-                    Name = CostItemName,
-                };
-
-                //Check existence of a table
-                if (DBController.TableExists(nameof(CostItem)))
-                {
-                    //Insertion table item into the table
-                    DBController.InsertItem(TableItem);
-                }
-                else
-                {
-                    //Creation of a table then insertion item into it
-                    DBController.AddTable(TableItem);
-                    DBController.InsertItem(TableItem);
+                    if (isInCall)
+                        return;
+                    isInCall = true;
                 }
 
-                // return to previous page
-                await Application.Current.MainPage.Navigation.PopAsync(); 
+                try
+                {
+                    AddNewCostItemToDatabase();
 
-                
+                    // return to previous page
+                    await Application.Current.MainPage.Navigation.PopAsync();
+                }
+                finally
+                {
+                    lock (syncLock)
+                    {
+                        isInCall = false;
+                    }
+                }
+
             });
         }
 
@@ -53,6 +55,30 @@ namespace Homeshare.Viewmodel
             set { costItemName = value; }
 
             get { return costItemName; }
+        }
+
+
+        private void  AddNewCostItemToDatabase()
+        {
+
+            //Constructing "Cost Item" table item
+            CostItem TableItem = new CostItem
+            {
+                Name = CostItemName,
+            };
+
+            //Check existence of a table
+            if (DBController.TableExists(nameof(CostItem)))
+            {
+                //Insertion table item into the table
+                DBController.InsertItem(TableItem);
+            }
+            else
+            {
+                //Creation of a table then insertion item into it
+                DBController.AddTable(TableItem);
+                DBController.InsertItem(TableItem);
+            }
         }
 
         //Command which called on add button pressed
