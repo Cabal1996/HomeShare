@@ -13,7 +13,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class SharablesViewModel : INotifyPropertyChanged
+    class SharablesViewModel : ViewModelBase
     {
         public SharablesViewModel()
         {
@@ -21,15 +21,15 @@ namespace Homeshare.Viewmodel
             SharableList = DBController.GetInfo<Sharable>();
 
             //Construction of go to item details page command with declared below
-            ItemDetails = new Command(async () => 
+            ItemDetails = new Command(() => 
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new SharableInfoPage(SelectedSharable));
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new SharableInfoPage(SelectedSharable)));
             });
 
             //Construction of go to add sharable page command with declared below
-            Add = new Command(async () =>
+            Add = new Command(() =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new AddSharablePage());
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new AddSharablePage()));
             });
         }
 

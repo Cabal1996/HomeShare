@@ -12,41 +12,26 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddSharableViewModel : INotifyPropertyChanged
+    class AddSharableViewModel : ViewModelBase
     {
         public AddSharableViewModel()
         {
             //Construction of command with declared below
-            AddButton = new Command(async() =>
+            AddButton = new Command(() =>
             {
-                //Constructing "Sharable" table item
-                Sharable TableItem = new Sharable
+                RapidTapPreventorAsync(async () =>
                 {
-                    Name = SharableName,
-                    Type = sharableType,
-                    Periodicity = periodicity,
-                    Price = Price
-                };
+                    AddNewItemToDatabase();
 
-                //Check existence of a table
-                if (DBController.TableExists(nameof(Sharable)))
-                {
-                    //Insertion table item into the table
-                    DBController.InsertItem(TableItem);
-                }
-                else
-                {
-                    //Creation of a table then insertion item into it
-                    DBController.AddTable(TableItem);
-                    DBController.InsertItem(TableItem);
-                }
+                    // return to previous page
+                    await Application.Current.MainPage.Navigation.PopAsync();
 
-                // return to previous page
-                await Application.Current.MainPage.Navigation.PopAsync(); 
-
-                // TODO open "Sharable" list page
+                    // TODO open "Sharable" list page
+                });
             });
         }
+
+       
 
         //Field of "sharable" name value
         private string sharableName;
@@ -85,8 +70,30 @@ namespace Homeshare.Viewmodel
         //Command which called on add button pressed
         public Command AddButton { get; }
 
-        //Part of parental interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void AddNewItemToDatabase()
+        {
+            //Constructing "Sharable" table item
+            Sharable TableItem = new Sharable
+            {
+                Name = SharableName,
+                Type = sharableType,
+                Periodicity = periodicity,
+                Price = Price
+            };
+
+            //Check existence of a table
+            if (DBController.TableExists(nameof(Sharable)))
+            {
+                //Insertion table item into the table
+                DBController.InsertItem(TableItem);
+            }
+            else
+            {
+                //Creation of a table then insertion item into it
+                DBController.AddTable(TableItem);
+                DBController.InsertItem(TableItem);
+            }
+        }
     }
 
     //Enumerated value for type

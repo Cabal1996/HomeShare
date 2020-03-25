@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 /*
@@ -14,91 +15,36 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddSpendViewModel : INotifyPropertyChanged
+    class AddSpendViewModel : ViewModelBase
     {
-
-        bool isInCall = false;
-        private object syncLock = new object();
-
         public AddSpendViewModel()
         {
-
-
-            if(SelectedCost == null)
+            if (SelectedCost == null)
             {
                 SelectedCostName = "Press to Select Cost";
             }
 
             PostDate = DateTime.Now;
-    
-            //Construction of command with declared below
-            CostSelectButton = new Command(async () =>
-            {
-                await Application.Current.MainPage.Navigation.PushAsync(new CostItemListPage(this));
-            });
 
             //Construction of command with declared below
-            SpendButton = new Command(async() =>
+            CostSelectButton = new Command(() =>
             {
-
-                lock (syncLock)
-                {
-                    if (isInCall)
-                        return;
-                    isInCall = true;
-                }
-
-                try
-                {
-                    INavigation Nav = Application.Current.MainPage.Navigation;
-
-                    //Constructing "Sharable" table item
-                    CostTable TableItem = new CostTable
-                    {
-                        Date = PostDate,
-                        CostItemId = SelectedCost.Id,
-                        Value = sum
-                    };
-
-                    //Check existence of a table
-                    if (DBController.TableExists(nameof(CostTable)))
-                    {
-                        //Insertion table item into the table
-                        DBController.InsertItem(TableItem);
-
-                        // Go To Expense list page
-                        await Nav.PopAsync();
-                    }
-                    else
-                    {
-                        //Creation of a table then insertion item into it
-                        DBController.AddTable(TableItem);
-                        DBController.InsertItem(TableItem);
-
-                        //Create and GO To Expense list page                                      
-                        Nav.InsertPageBefore(new SpendsListPage(), Nav.NavigationStack[Nav.NavigationStack.Count - 1]);
-                        await Nav.PopAsync();
-                    }
-                }
-                finally
-                {
-                    lock (syncLock)
-                    {
-                        isInCall = false;
-                    }
-                }
-
-                
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new CostItemListPage(this)));
             });
 
-            
+
+            //Construction of command with declared below
+            SpendButton = new Command(() =>
+            {
+                RapidTapPreventorAsync(Add);
+            });
         }
 
         //Field of "Cost item" name value
         private string selectedCostName;
         public string SelectedCostName
         {
-            set 
+            set
             {
                 selectedCostName = value;
                 //Value change notifier
@@ -121,8 +67,8 @@ namespace Homeshare.Viewmodel
         //Bind-able value of date
         public DateTime PostDate
         {
-            set 
-            { 
+            set
+            {
                 date = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PostDate)));
             }
@@ -132,7 +78,7 @@ namespace Homeshare.Viewmodel
 
         private CostItem selectedCost;
         public CostItem SelectedCost
-        { 
+        {
             get
             {
                 return selectedCost;
@@ -140,23 +86,53 @@ namespace Homeshare.Viewmodel
 
             set
             {
-                if(value != null)
-                SelectedCostName = value.Name;
+                if (value != null)
+                    SelectedCostName = value.Name;
                 selectedCost = value;
             }
         }
 
-        private void AddFunction()
-        {
 
+        //Adds element to the database (used in command)
+        private async Task<Page> Add()
+        {
+            INavigation Nav = Application.Current.MainPage.Navigation;
+
+            //Constructing "Sharable" table item
+            CostTable TableItem = new CostTable
+            {
+                Date = PostDate,
+                CostItemId = SelectedCost.Id,
+                Value = sum
+            };
+
+            //Check existence of a table
+            if (DBController.TableExists(nameof(CostTable)))
+            {
+                //Insertion table item into the table
+                DBController.InsertItem(TableItem);
+
+                // Go To Expense list page
+                return await Nav.PopAsync();
+            }
+            else
+            {
+                //Creation of a table then insertion item into it
+                DBController.AddTable(TableItem);
+                DBController.InsertItem(TableItem);
+
+                //Create and GO To Expense list page                                      
+                Nav.InsertPageBefore(new SpendsListPage(), Nav.NavigationStack[Nav.NavigationStack.Count - 1]);
+                return await Nav.PopAsync();
+            }
         }
+
 
         //Command which called on add button pressed
         public Command SpendButton { get; }
         //Command which called on Select Cost button pressed
         public Command CostSelectButton { get; }
 
-        //Part of parental interface
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

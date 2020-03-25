@@ -13,7 +13,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class SpendsViewModel : INotifyPropertyChanged
+    class SpendsViewModel : ViewModelBase
     {
         private const float DAY_IN_SECONDS = 86400;
         public SpendsViewModel()
@@ -33,9 +33,9 @@ namespace Homeshare.Viewmodel
             });
 
             //Construction of go to add Spend page command with declared below
-            Add = new Command(async () =>
+            Add = new Command(() =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new AddSpendPage());
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new AddSpendPage()));
             });
 
             Refresh = new Command(Initialization);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 /*
@@ -11,7 +12,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    public class CalcViewModel : INotifyPropertyChanged
+    public class CalcViewModel : ViewModelBase
     {
         public CalcViewModel()
         {
@@ -45,13 +46,22 @@ namespace Homeshare.Viewmodel
         {
             get
             {
-                return new Command<List<Editor>>((MatesDaysData) => Calculation(MatesDaysData));
+                return new Command<List<Editor>>((MatesDaysData) =>
+                {
+                    RapidTapPreventorAsync(async () =>
+                    {
+                        //Go to result page and passing result value into page constructor
+                        await Application.Current.MainPage.Navigation.PushAsync(new CalculateResaultPage(Calculation(MatesDaysData)));
+                    });
+                });
             }
         }
 
         //Actual calculation
-        public async void Calculation(List<Editor> MatesDaysData)
+        public List<float> Calculation(List<Editor> MatesDaysData)
         {
+
+            
             // results list
             List<float> resalt = new List<float>();
 
@@ -73,8 +83,7 @@ namespace Homeshare.Viewmodel
                 resalt.Add(deltaPrice * int.Parse(mate.Text));
             }
 
-            //Go to result page and passing result value into page constructor
-            await Application.Current.MainPage.Navigation.PushAsync(new CalculateResaultPage(resalt));
+            return resalt;
         }
 
         //Part of parental interface

@@ -13,7 +13,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class MatesViewModel : INotifyPropertyChanged
+    class MatesViewModel : ViewModelBase
     {
         public MatesViewModel()
         {
@@ -21,15 +21,15 @@ namespace Homeshare.Viewmodel
             MatesList = DBController.GetInfo<Mate>();
 
             //Construction of go to item details page command with declared below
-            ItemDetails = new Command(async () => 
+            ItemDetails = new Command(() => 
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new MateInfoPage(SelectedMate));
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new MateInfoPage(SelectedMate)));
             });
 
             //Construction of go to add mate page command with declared below
-            Add = new Command(async () =>
+            Add = new Command(() =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new AddMatePage());
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new AddMatePage()));
             });
         }
 

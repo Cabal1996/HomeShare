@@ -14,63 +14,71 @@ using Homeshare.DB;
 
 namespace Homeshare.Viewmodel
 {
-    class MainMenuViewModel : INotifyPropertyChanged
+    class MainMenuViewModel : ViewModelBase
     {
         public MainMenuViewModel()
         {
             //Construction of go to calculation page command with declared below
-            QuickCalcCommand = new Command(async () =>
+            QuickCalcCommand = new Command(() =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new  QuickCalcPage());
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new  QuickCalcPage()));
             });
 
             //Construction of add sharable button command with declared below
-            SharableCmd = new Command(async () =>
+            SharableCmd = new Command(() =>
             {
-                
-                //Check if sharable table exists within data base
-                if(DBController.TableExists(nameof(Homeshare.Model.Sharable)))
+                RapidTapPreventorAsync(async () =>
                 {
-                    //Go to sharable list page (table exists)
-                    await Application.Current.MainPage.Navigation.PushAsync((Page)new SharablesListPage());
-                }
-                else
-                {
-                    //Go to Add sharable page (table does not exists)
-                    await Application.Current.MainPage.Navigation.PushAsync((Page)new AddSharablePage());
-                }
+                    //Check if sharable table exists within data base
+                    if (DBController.TableExists(nameof(Sharable)))
+                    {
+                        //Go to sharable list page (table exists)
+                        await Application.Current.MainPage.Navigation.PushAsync((Page)new SharablesListPage());
+                    }
+                    else
+                    {
+                        //Go to Add sharable page (table does not exists)
+                        await Application.Current.MainPage.Navigation.PushAsync((Page)new AddSharablePage());
+                    }
+                });
             });
 
             //Construction of add mate button command with declared below
-            MateCmd = new Command(async () =>
+            MateCmd = new Command(() =>
             {
-                //Check if "Mate" table exists within data base
-                if (DBController.TableExists(nameof(Mate)))
+                RapidTapPreventorAsync(async () =>
                 {
-                    //Go to mate list page (table exists)
-                    await Application.Current.MainPage.Navigation.PushAsync(new MatesListPage());
-                }
-                else
-                {
-                    //Go to Add mate page (table does not exists)
-                    await Application.Current.MainPage.Navigation.PushAsync(new AddMatePage());
-                }
+                    //Check if "Mate" table exists within data base
+                    if (DBController.TableExists(nameof(Mate)))
+                    {
+                        //Go to mate list page (table exists)
+                        await Application.Current.MainPage.Navigation.PushAsync(new MatesListPage());
+                    }
+                    else
+                    {
+                        //Go to Add mate page (table does not exists)
+                        await Application.Current.MainPage.Navigation.PushAsync(new AddMatePage());
+                    }
+                });
             });
 
             //Construction of Clear base button command with declared below
             ClearBaseCmd = new Command(DBController.DeleteDatabase);
 
             //Construction of Post spend button command with declared below
-            PostSpendCmd = new Command(async () =>
+            PostSpendCmd = new Command(() =>
             {
-                if (DBController.TableExists(nameof(CostTable)))
+                RapidTapPreventorAsync(async () =>
                 {
-                    await Application.Current.MainPage.Navigation.PushAsync(new SpendsListPage());
-                }
-                else
-                {
-                    await Application.Current.MainPage.Navigation.PushAsync(new AddSpendPage());
-                }
+                    if (DBController.TableExists(nameof(CostTable)))
+                    {
+                        await Application.Current.MainPage.Navigation.PushAsync(new SpendsListPage());
+                    }
+                    else
+                    {
+                        await Application.Current.MainPage.Navigation.PushAsync(new AddSpendPage());
+                    }
+                });
             });
         }
 

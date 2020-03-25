@@ -13,38 +13,20 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddCostItemViewModel : INotifyPropertyChanged
+    class AddCostItemViewModel : ViewModelBase
     {
-        bool isInCall = false;
-        private object syncLock = new object();
-
         public AddCostItemViewModel()
         {
             //Construction of command with declared below
-            AddButton = new Command(async () =>
+            AddButton = new Command(() =>
             {
-                lock (syncLock)
-                {
-                    if (isInCall)
-                        return;
-                    isInCall = true;
-                }
-
-                try
+                RapidTapPreventorAsync(async () =>
                 {
                     AddNewCostItemToDatabase();
 
                     // return to previous page
                     await Application.Current.MainPage.Navigation.PopAsync();
-                }
-                finally
-                {
-                    lock (syncLock)
-                    {
-                        isInCall = false;
-                    }
-                }
-
+                }); 
             });
         }
 

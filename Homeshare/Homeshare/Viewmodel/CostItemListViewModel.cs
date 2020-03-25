@@ -13,24 +13,27 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class CostItemListViewModel : INotifyPropertyChanged
+    class CostItemListViewModel : ViewModelBase
     {
         public CostItemListViewModel(AddSpendViewModel spendViewModel)
         {          
             //Construction of go to item select Cost item in spend VM or details page. Command declared below
-            SelectItemCmd = new Command(async () => 
+            SelectItemCmd = new Command(() => 
             {
-                spendViewModel.SelectedCost = SelectedCostItem;
-                await Application.Current.MainPage.Navigation.PopAsync();
+                RapidTapPreventorAsync(async () => 
+                {
+                    spendViewModel.SelectedCost = SelectedCostItem;
+                    await Application.Current.MainPage.Navigation.PopAsync();
+                });
             });;
 
             //Construction of go to add new cost item page command with declared below
-            Add = new Command(async () =>
+            Add = new Command(() =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new AddCostItemPage());
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new AddCostItemPage()));
             });
 
-            Refresh = new Command(Initialization);
+            Refresh = new Command(() => RapidTapPreventor(Initialization));
         }
 
         //Selected item value

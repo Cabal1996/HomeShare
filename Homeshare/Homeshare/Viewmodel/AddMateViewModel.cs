@@ -12,36 +12,21 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddMateViewModel : INotifyPropertyChanged
+    class AddMateViewModel : ViewModelBase
     {
         public AddMateViewModel()
         {
             //Construction of command with declared below
-            AddButton = new Command(async() =>
+            AddButton = new Command(() =>
             {
-                //Constructing "mate" table item
-                Mate TableItem = new Mate
+                RapidTapPreventorAsync(async () => 
                 {
-                    FirstName = NewFirstName,
-                    LastName = NewLastName,
-                };
+                    AddNewItemToDatabase();
 
-                //Check existence of a table
-                if (DBController.TableExists(nameof(Mate)))
-                {
-                    //Insertion table item into the table
-                    DBController.InsertItem(TableItem);
-                }
-                else
-                {
-                    //Creation of a table then insertion item into it
-                    DBController.AddTable(TableItem);
-                    DBController.InsertItem(TableItem);
-                }
-
-                // return to previous page
-                await Application.Current.MainPage.Navigation.PopAsync();
-                // TODO open "Mate" list page
+                    // return to previous page
+                    await Application.Current.MainPage.Navigation.PopAsync();
+                    // TODO open "Mate" list page
+                });
             });
         }
 
@@ -66,7 +51,27 @@ namespace Homeshare.Viewmodel
         //Command which called on add button pressed
         public Command AddButton { get; }
 
-        //Part of parental interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void AddNewItemToDatabase()
+        {
+            //Constructing "mate" table item
+            Mate TableItem = new Mate
+            {
+                FirstName = NewFirstName,
+                LastName = NewLastName,
+            };
+
+            //Check existence of a table
+            if (DBController.TableExists(nameof(Mate)))
+            {
+                //Insertion table item into the table
+                DBController.InsertItem(TableItem);
+            }
+            else
+            {
+                //Creation of a table then insertion item into it
+                DBController.AddTable(TableItem);
+                DBController.InsertItem(TableItem);
+            }
+        }
     }
 }
