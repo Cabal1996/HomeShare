@@ -13,12 +13,12 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class SpendsViewModel : ViewModelBase
+    class SpendsViewModel : ViewModelBase, INotifyPropertyChanged
     {
         private const float DAY_IN_SECONDS = 86400;
         public SpendsViewModel()
         {
-            //Retrieving data from data base table as a list
+            //Initializing Lists
             DisplayList = new List<ViewItem>();
             displayList = new List<ViewItem>();
 
@@ -27,9 +27,9 @@ namespace Homeshare.Viewmodel
             ToDate = (DateTime.Today).AddSeconds(DAY_IN_SECONDS - 1);
 
             //Construction of go to item details page command with declared below
-            ItemDetails = new Command(async () => 
+            ItemDetails = new Command(() => 
             {
-                //await Application.Current.MainPage.Navigation.PushAsync(new SharableInfoPage(SelectedSharable));
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new SpendsListDetailePage(this)));
             });
 
             //Construction of go to add Spend page command with declared below
@@ -42,8 +42,8 @@ namespace Homeshare.Viewmodel
         }
 
         //Selected item value
-        CostTable selectedSpent;
-        public CostTable SelectedSpent 
+        CostItem selectedSpent;
+        public CostItem SelectedSpent 
         { 
             get => selectedSpent; 
             set
@@ -52,14 +52,22 @@ namespace Homeshare.Viewmodel
             }
         }
 
+        public ViewItem SelectedTableRow
+        {
+            set 
+            {
+                SelectedSpent = ConvertViewItemToCostItem(value);
+            }
+        }
+
         //Actual list data value
         public List<CostTable> SpentsList { get; set; }
 
         private List<ViewItem> displayList;
         //Collection to display
-        public List<ViewItem> DisplayList 
+        public List<ViewItem> DisplayList
         {
-            get  { return displayList; } 
+            get { return displayList; } 
             set
             {
                 displayList = value;
@@ -106,18 +114,17 @@ namespace Homeshare.Viewmodel
             }
         }
 
-        //Part of parental interface
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void Initialization()
         {
             SpentsList = DBController.GetInfo<CostTable>();
             List<ViewItem> TempList = new List<ViewItem>();
             List<CostItem> CostsNames = DBController.GetInfo<CostItem>();
+            
+
 
             foreach (var I in SpentsList)
             {
-                if (IsInDataRange(I.Date, FromDate, ToDate))
+                if (IsInDataRange(I.Date))
                 {
                     ViewItem Item = new ViewItem();
 
@@ -151,9 +158,31 @@ namespace Homeshare.Viewmodel
             DisplayList = TempList;
         }
 
-        private static bool IsInDataRange(DateTime data, DateTime min, DateTime max)
+        private bool IsInDataRange(DateTime data)
         {
-            return min <= data && data <= max;
+            if (FromDate == null)
+                return data <= ToDate;
+            if (ToDate == null)
+                return FromDate <= data;
+            if (FromDate == null && ToDate == null)
+                return true;
+            return (FromDate <= data && data <= ToDate);
         }
+
+        private static CostItem ConvertViewItemToCostItem(ViewItem InData)
+        {
+            List<CostItem> AllCosts = DBController.GetInfo<CostItem>();
+
+            foreach (var I in AllCosts)
+            {
+                if(I.Name == InData.Subconto1)
+                    return I;
+            }
+
+            return null;
+        }
+
+        //Part of parental interface
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

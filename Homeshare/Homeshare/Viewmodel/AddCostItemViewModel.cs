@@ -13,17 +13,18 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddCostItemViewModel : ViewModelBase
+    class AddCostItemViewModel : ViewModelBase , INotifyPropertyChanged
     {
         public AddCostItemViewModel()
         {
             //Construction of command with declared below
             AddButton = new Command(() =>
             {
+                
+
                 RapidTapPreventorAsync(async () =>
                 {
                     AddNewCostItemToDatabase();
-
                     // return to previous page
                     await Application.Current.MainPage.Navigation.PopAsync();
                 }); 

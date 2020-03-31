@@ -38,7 +38,7 @@ namespace Homeshare.Views
 
                 RowDefinitions =
                 {
-                    new RowDefinition {Height = new GridLength(1, GridUnitType.Star)}        
+                    new RowDefinition {Height = new GridLength(2, GridUnitType.Star)}        
                 }
             };
             layout.Children.Add(dateGrid);
@@ -67,12 +67,12 @@ namespace Homeshare.Views
 
             CollectionView spentList = new CollectionView
             {
-                ItemTemplate = new NotesTemplate(),
+                ItemTemplate = new TableNotesTemplate(),
                 SelectionMode = SelectionMode.Single
             };
 
             spentList.SetBinding(CollectionView.ItemsSourceProperty, nameof(SpendsViewModel.DisplayList));
-            spentList.SetBinding(CollectionView.SelectedItemProperty, nameof(SpendsViewModel.SelectedSpent));
+            spentList.SetBinding(CollectionView.SelectedItemProperty, nameof(SpendsViewModel.SelectedTableRow));
             spentList.SetBinding(CollectionView.SelectionChangedCommandProperty, nameof(SpendsViewModel.ItemDetails));
             layout.Children.Add(spentList);
 
@@ -83,50 +83,6 @@ namespace Homeshare.Views
                 EventName = "Appearing",
                 Command = ((SpendsViewModel)BindingContext).Refresh
             });
-        }
-
-        class NotesTemplate : DataTemplate
-        {
-            public NotesTemplate() : base(LoadTemplate)
-            {
-
-            }
-
-            static StackLayout LoadTemplate()
-            {
-                Grid Line = new Grid
-                {
-                    ColumnDefinitions =
-                    {
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
-                    },
-
-                    RowDefinitions = 
-                    { 
-                        new RowDefinition { Height = new GridLength(1, GridUnitType.Star)}
-                    }
-                };
-                var CostName = new Label();
-                CostName.SetBinding(Label.TextProperty, nameof(ViewItem.Subconto1));
-                Line.Children.Add(CostName, 0, 0);
-
-                var CostValue = new Label();
-                CostValue.SetBinding(Label.TextProperty, nameof(ViewItem.Subconto2));
-                Line.Children.Add(CostValue, 1, 0);
-
-                var frame = new Frame
-                {
-                    VerticalOptions = LayoutOptions.Center,
-                    Content = Line
-                };
-
-                return new StackLayout
-                {
-                    Children = { frame },
-                    Padding = new Thickness(10, 10)
-                };
-            }
         }
     }
 }

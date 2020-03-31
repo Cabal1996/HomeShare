@@ -12,7 +12,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddMateViewModel : ViewModelBase
+    class AddMateViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public AddMateViewModel()
         {
@@ -41,6 +41,7 @@ namespace Homeshare.Viewmodel
 
         //Field of last name value
         private string lastName;
+
         public string NewLastName
         {
             set { lastName = value; }
@@ -73,5 +74,7 @@ namespace Homeshare.Viewmodel
                 DBController.InsertItem(TableItem);
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

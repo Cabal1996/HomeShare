@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase
     {
         bool isInCall = false;
         private object syncLock = new object();
@@ -80,6 +77,11 @@ namespace Homeshare.Viewmodel
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public object SharedData;
+
+        public virtual void OnVMPop()
+        {
+
+        }
     }
 }

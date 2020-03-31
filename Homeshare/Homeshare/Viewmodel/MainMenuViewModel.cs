@@ -14,7 +14,7 @@ using Homeshare.DB;
 
 namespace Homeshare.Viewmodel
 {
-    class MainMenuViewModel : ViewModelBase
+    class MainMenuViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public MainMenuViewModel()
         {

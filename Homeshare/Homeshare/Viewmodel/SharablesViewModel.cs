@@ -13,7 +13,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class SharablesViewModel : ViewModelBase
+    class SharablesViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public SharablesViewModel()
         {

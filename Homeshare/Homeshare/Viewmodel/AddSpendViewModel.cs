@@ -15,7 +15,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddSpendViewModel : ViewModelBase
+    class AddSpendViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public AddSpendViewModel()
         {
@@ -39,7 +39,12 @@ namespace Homeshare.Viewmodel
                 RapidTapPreventorAsync(Add);
             });
         }
-
+        
+        public override void OnVMPop()
+        {
+            SelectedCost = (CostItem)SharedData;
+        }
+        
         //Field of "Cost item" name value
         private string selectedCostName;
         public string SelectedCostName

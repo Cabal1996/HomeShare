@@ -10,10 +10,10 @@ namespace Homeshare.Views
 {
     class CostItemListPage : ContentPage
     {
-         public CostItemListPage(AddSpendViewModel spendViewModel)
+         public CostItemListPage(ViewModelBase Caller)
         {
         
-            BindingContext = new CostItemListViewModel(spendViewModel);
+            BindingContext = new CostItemListViewModel(Caller);
 
             var layout = new StackLayout();
 
@@ -22,7 +22,6 @@ namespace Homeshare.Views
                 Text = "Add",
                 Order = ToolbarItemOrder.Primary,
                 Priority = 0,
-
             };
 
             ToolbarItems.Add(AddButton);
@@ -32,12 +31,12 @@ namespace Homeshare.Views
             
             CollectionView costItemsList = new CollectionView
             {
-                ItemTemplate = new NotesTemplate(),
+                ItemTemplate = new CostItemNotesTemplate(),
                 SelectionMode = SelectionMode.Single
             };
             
 
-            costItemsList.SetBinding(CollectionView.ItemsSourceProperty, nameof(CostItemListViewModel.CostItemSharableList));
+            costItemsList.SetBinding(CollectionView.ItemsSourceProperty, nameof(CostItemListViewModel.CostItemList));
             costItemsList.SetBinding(CollectionView.SelectedItemProperty, nameof(CostItemListViewModel.SelectedCostItem));
             costItemsList.SetBinding(CollectionView.SelectionChangedCommandProperty, nameof(CostItemListViewModel.SelectItemCmd));
             layout.Children.Add(costItemsList);
@@ -52,12 +51,9 @@ namespace Homeshare.Views
 
         }
 
-        
-        
-
-        class NotesTemplate : DataTemplate
+        class CostItemNotesTemplate : DataTemplate
         {
-            public NotesTemplate() : base(LoadTemplate)
+            public CostItemNotesTemplate() : base(LoadTemplate)
             {
 
             }

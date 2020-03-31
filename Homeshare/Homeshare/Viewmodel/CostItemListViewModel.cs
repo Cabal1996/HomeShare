@@ -13,19 +13,23 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class CostItemListViewModel : ViewModelBase
+
+    class CostItemListViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        public CostItemListViewModel(AddSpendViewModel spendViewModel)
-        {          
+        public CostItemListViewModel(ViewModelBase Caller)
+        {
+            
             //Construction of go to item select Cost item in spend VM or details page. Command declared below
-            SelectItemCmd = new Command(() => 
+            SelectItemCmd = new Command(() =>
             {
-                RapidTapPreventorAsync(async () => 
-                {
-                    spendViewModel.SelectedCost = SelectedCostItem;
-                    await Application.Current.MainPage.Navigation.PopAsync();
-                });
-            });;
+                Caller.SharedData = SelectedCostItem;
+
+                Caller.OnVMPop();
+
+                RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PopAsync());
+            });
+           
+
 
             //Construction of go to add new cost item page command with declared below
             Add = new Command(() =>
@@ -33,7 +37,7 @@ namespace Homeshare.Viewmodel
                 RapidTapPreventorAsync(async () => await Application.Current.MainPage.Navigation.PushAsync(new AddCostItemPage()));
             });
 
-            Refresh = new Command(() => RapidTapPreventor(Initialization));
+            Refresh = new Command(Initialization);
         }
 
         //Selected item value
@@ -54,7 +58,7 @@ namespace Homeshare.Viewmodel
             if (DBController.TableExists("CostItem"))
             {
                 //Retrieving data from data base table as a list
-                CostItemSharableList = DBController.GetInfo<CostItem>();
+                CostItemList = DBController.GetInfo<CostItem>();
             }
             else
             {
@@ -65,14 +69,14 @@ namespace Homeshare.Viewmodel
 
         private List<CostItem> list;
         //Cost list data value
-        public List<CostItem> CostItemSharableList
+        public List<CostItem> CostItemList
         {
             get { return list; }
             set
             {
                 list = new List<CostItem>(value);
 
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CostItemSharableList)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CostItemList)));
             }
         }
 

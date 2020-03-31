@@ -12,7 +12,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    class AddSharableViewModel : ViewModelBase
+    class AddSharableViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public AddSharableViewModel()
         {
@@ -94,6 +94,8 @@ namespace Homeshare.Viewmodel
                 DBController.InsertItem(TableItem);
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     //Enumerated value for type

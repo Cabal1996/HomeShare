@@ -12,7 +12,7 @@ using Xamarin.Forms;
 
 namespace Homeshare.Viewmodel
 {
-    public class CalcViewModel : ViewModelBase
+    public class CalcViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public CalcViewModel()
         {
